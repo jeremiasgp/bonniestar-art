@@ -1,0 +1,5 @@
+.artwork-gallery-items { margin-inline-start: 1.5rem; }
+.artwork-gallery-items li { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding-block: 0.5rem; }
+.artwork-gallery-items img { inline-size: 5rem; block-size: 5rem; object-fit: contain; }
+.artwork-gallery-items span { flex: 1 1 8rem; overflow-wrap: anywhere; }
+.artwork-gallery-editor button { min-block-size: 2.75rem; }

@@ -1,7 +1,7 @@
 /*
 Theme Name: Bonniestar Art Theme
 Description: A warm, accessible artist portfolio using native WordPress blocks and CSS.
-Version: 1.2.0
+Version: 1.3.0
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
@@ -77,6 +77,14 @@ Tags: full-site-editing
 }
 
 /* Components stay outside the base layer to override core block defaults. */
+.artwork-details { display: flex; flex-wrap: wrap; gap: var(--wp--preset--spacing--40); }
+.artwork-details dt { font-weight: 700; color: var(--wp--preset--color--accent); }
+.artwork-details dd { margin: 0; }
+.artwork-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--wp--preset--spacing--40); }
+.artwork-gallery figure { margin: 0; min-inline-size: 0; }
+.artwork-gallery img { display: block; block-size: auto; }
+.artwork-gallery figcaption { font-size: var(--wp--preset--font-size--small); color: var(--wp--preset--color--muted); }
+
 .wp-gallery-lightbox {
 	--gallery-lightbox-surface: var(--wp--preset--color--surface);
 	--gallery-lightbox-text: var(--wp--preset--color--ink);

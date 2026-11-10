@@ -44,9 +44,10 @@ subdirectorios. Después de guardar una personalización en el Editor, exportarl
 al código si debe formar parte del tema: la versión guardada en la base de datos
 prevalece sobre estos archivos.
 
-Se conservan `page.html` y `single.html` para las URLs individuales. La galería
-no crea entradas o modelos de obra: una ficha con URL propia, metadatos y enlace
-desde el modal puede añadirse después en el plugin, cuando se defina ese contenido.
+Se conservan `page.html` y `single.html` para páginas y entradas. Las obras se
+crean en Obras desde el administrador y usan `single-bonniestar_art_obra.html`,
+con técnica, medidas, cuerpo y galería del plugin. La galería de portada sigue
+siendo una selección manual; no se conecta automáticamente al listado de obras.
 
 Antes de publicar: cargar logo, obras, URL de Instagram y datos reales de contacto;
 revisar textos y probar teclado, modal, zoom de texto y Editor en móvil y escritorio.

@@ -1,4 +1,56 @@
-# Lightbox de imágenes y galerías
+# Obras y lightbox
+
+## Obras
+
+En el administrador aparece **Obras → Añadir obra**. Se usan título, cuerpo
+(editor de bloques), imagen destacada y revisiones nativos. El panel «Datos de la
+obra» agrega técnica (Óleo, Acrílico, Mixta), medidas e imágenes ordenables desde
+la biblioteca. Los campos son opcionales; no se crea contenido de muestra.
+
+La clave interna es `bonniestar_art_obra`, con base de URL `obras`. No hay
+categorías, etiquetas ni taxonomías propias. Las taxonomías internas de idioma
+las administra Polylang. Si se usan enlaces permanentes simples, WordPress
+mantiene URLs por query string; la base `/obras/` se aplica al activar enlaces
+permanentes amigables en Ajustes → Enlaces permanentes. Después de incorporar
+el módulo a otro sitio, guardar esos ajustes o ejecutar `npm run wp -- rewrite flush`
+una sola vez. No se regeneran reglas en cada petición ni se reactiva el plugin.
+
+La técnica guarda `oleo`, `acrilico` o `mixta`; medidas guarda texto; la galería,
+una lista ordenada de IDs de imágenes. Estos metadatos privados tienen soporte
+de revisiones. El guardado verifica capacidad y nonce, y omite autosaves,
+revisiones y acciones que no envían los campos.
+
+Con Polylang, título y cuerpo se traducen por separado; técnica, medidas, galería
+e imagen destacada se comparten. Cambiar los datos físicos en una traducción
+también actualiza las otras. Se utilizan adjuntos traducidos cuando existen,
+sin requerir duplicar el archivo físico. Los textos públicos de técnica y las
+etiquetas se pueden traducir en Idiomas → Traducciones, grupo «Obras».
+El registro y los campos también funcionan si se desactiva Polylang.
+
+El tema incluye `single-bonniestar_art_obra.html`, sin fecha editorial. Utiliza
+los shortcodes `[bonniestar_art_obra_details]` y `[bonniestar_art_obra_gallery]`
+para mostrar metadatos y galería; se pueden insertar con el bloque Shortcode
+en otra plantilla. El listado usa el archivo nativo; no se modifica la portada.
+
+### REST
+
+La API requiere autenticación para todas sus rutas. El editor nativo mantiene
+REST habilitada para usuarios autenticados; los permisos y nonces de WordPress
+siguen aplicándose. Los visitantes reciben HTTP 401 tanto en `/wp-json/` como
+con `?rest_route=...`. Esto no restringe las páginas web públicas. Los nuevos
+campos no se exponen como metadatos REST y no se agregan endpoints personalizados.
+Si un futuro plugin necesita REST anónima, habrá que definir una excepción explícita.
+
+### Verificar Obras
+
+```text
+npm run wp -- eval-file /var/www/html/wp-content/plugins/bonniestar-art-plugin/tests/artworks.php
+```
+
+La prueba requiere Polylang con es/en/fr y un administrador existente; crea
+borradores y un registro de medio temporales, y los elimina en `finally`.
+
+## Lightbox de imágenes y galerías
 
 Funcionalidad independiente del tema, sin librerías, bundler, opciones guardadas,
 tablas ni endpoints. Se integra con bloques Imagen/Galería y galerías clásicas.

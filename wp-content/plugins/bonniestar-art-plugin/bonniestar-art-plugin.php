@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Bonniestar Art Plugin
- * Description: Minimal home for functionality independent of the active theme.
- * Version: 1.1.0
+ * Description: Artwork content, multilingual integration and an accessible gallery lightbox.
+ * Version: 1.2.0
  * Requires at least: 7.1
  * Requires PHP: 8.3
  * License: GPL-2.0-or-later
@@ -18,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 
 require_once __DIR__ . '/includes/lightbox.php';
+require_once __DIR__ . '/includes/artworks.php';
+require_once __DIR__ . '/includes/artwork-editor.php';
+require_once __DIR__ . '/includes/artwork-languages.php';
+require_once __DIR__ . '/includes/rest-access.php';
