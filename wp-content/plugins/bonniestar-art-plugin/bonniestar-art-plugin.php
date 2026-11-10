@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bonniestar Art Plugin
  * Description: Minimal home for functionality independent of the active theme.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 7.1
  * Requires PHP: 8.3
  * License: GPL-2.0-or-later
@@ -18,6 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
-// Register project-independent functionality on WordPress hooks as it is needed.
+require_once __DIR__ . '/includes/lightbox.php';

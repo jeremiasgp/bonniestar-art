@@ -9,7 +9,7 @@
       "header": { "anchorOffset": "9rem" }
     },
     "blocks": {
-      "core/image": { "lightbox": { "enabled": true, "allowEditing": true } }
+      "core/image": { "lightbox": { "enabled": false, "allowEditing": false } }
     },
     "color": {
       "defaultPalette": false,

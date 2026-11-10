@@ -32,9 +32,10 @@ sin recortar. Los textos de portada son una propuesta editorial inicial.
 3. Conservar la clase `bonniestar-art-gallery` y desactivar el recorte. Completar
    el texto alternativo y una leyenda con título, técnica y medidas.
 4. Quitar el párrafo provisional cuando la galería tenga contenido.
-5. Las imágenes sin enlace propio se amplían en el lightbox nativo configurado
-   en `settings.blocks.core/image.lightbox`. Se puede cambiar por imagen. No
-   elegir enlace al archivo o adjunto si se quiere abrir el modal.
+5. El plugin amplía las imágenes sin enlace o con enlace al archivo en su lightbox
+   JavaScript. Las URLs de páginas/adjuntos conservan su navegación. Usar la clase
+   `no-lightbox` en una imagen o galería para excluirla. El lightbox nativo se
+   deshabilita durante el render para evitar dos modales sobre la misma imagen.
 
 La portada se define en `templates/front-page.html` y el patrón `artist-home.php`;
 se edita como plantilla, no como contenido de una página. El patrón `site-header.php`
