@@ -1,6 +1,6 @@
 <?php
 /**
- * Artwork integration checks. Temporary drafts are removed in finally.
+ * Artwork integration checks. Temporary records are removed in finally.
  *
  * @package BonniestarArtPlugin
  */
@@ -22,9 +22,10 @@ $assert = static function ( $condition, $message ) {
 	}
 };
 
-$fixture_ids = array();
-$user_id     = get_current_user_id();
-$old_post    = $GLOBALS['post'] ?? null;
+$fixture_ids  = array();
+$user_id      = get_current_user_id();
+$old_post     = $GLOBALS['post'] ?? null;
+$old_language = function_exists( 'PLL' ) ? ( PLL()->curlang ?? null ) : null;
 // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Preserve input while explicitly testing nonce failures.
 $old_input = $_POST;
 $image_id  = 0;
@@ -117,8 +118,57 @@ try {
 	$gallery         = \Bonniestar_Art_Plugin\artwork_gallery_shortcode();
 	$assert( str_contains( $details, '80 × 60 cm' ), 'Public artwork facts must render.' );
 	$assert( str_contains( $gallery, 'data-gallery-lightbox' ) && str_contains( $gallery, 'data-gallery-lightbox-src' ), 'The public gallery must integrate with the full-size lightbox.' );
+	set_post_thumbnail( $fixture_ids['es'], $image_id );
+	$preview_attrs          = array( 'attrs' => array( 'className' => 'is-artwork-lightbox' ) );
+	$preview_block          = new \WP_Block(
+		array( 'blockName' => 'core/post-featured-image' ),
+		array( 'postId' => $fixture_ids['es'] )
+	);
+	$preview_html           = '<figure><a href="' . esc_url( get_permalink( $fixture_ids['es'] ) ) . '"><img alt=""></a></figure>';
+	$artwork_preview_result = \Bonniestar_Art_Plugin\artwork_preview_lightbox( $preview_html, $preview_attrs, $preview_block );
+	$assert( str_contains( $artwork_preview_result, 'data-gallery-lightbox' ) && str_contains( $artwork_preview_result, '80 × 60 cm' ), 'Artwork previews must expose a lightbox group and factual caption.' );
+	$assert( 1 === substr_count( $artwork_preview_result, '<img' ), 'The main image must not be duplicated when selected in the detail gallery.' );
+	$assert( str_contains( $artwork_preview_result, 'href="' . esc_url( home_url( '/temporary-artwork-test.jpg' ) ) . '"' ), 'The preview must link to the full image instead of the single page.' );
+	$assert( \Bonniestar_Art_Plugin\artwork_preview_lightbox( $preview_html, array(), $preview_block ) === $preview_html, 'Featured images must opt in before their links change.' );
 	$assert( '' === \Bonniestar_Art_Plugin\sanitize_artwork_technique( 'invalid' ), 'Unknown techniques must be rejected.' );
 	$assert( array( $image_id ) === \Bonniestar_Art_Plugin\artwork_translate_gallery( array( $image_id ), GALLERY_META, 'fr' ), 'Images without translated attachments must remain available.' );
+	$languages = \Bonniestar_Art_Plugin\artwork_browser_languages( array() );
+	$assert( count( $languages ) === count( pll_languages_list() ), 'Browser detection must consider all configured languages.' );
+	foreach ( $languages as $language ) {
+		if ( 'en' === $language->slug ) {
+			PLL()->curlang = $language;
+		}
+	}
+	wp_update_post(
+		array(
+			'ID'          => $fixture_ids['es'],
+			'post_status' => 'publish',
+		)
+	);
+	$query    = array( 'post_type' => ARTWORK_TYPE );
+	$fallback = \Bonniestar_Art_Plugin\artwork_query_language_fallback( $query );
+	$assert( in_array( $fixture_ids['es'], $fallback['post__in'], true ) && ! in_array( $fixture_ids['en'], $fallback['post__in'], true ), 'A draft translation must retain the published original.' );
+	wp_update_post(
+		array(
+			'ID'          => $fixture_ids['en'],
+			'post_status' => 'publish',
+		)
+	);
+	$fallback = \Bonniestar_Art_Plugin\artwork_query_language_fallback( $query );
+	$assert( in_array( $fixture_ids['en'], $fallback['post__in'], true ) && ! in_array( $fixture_ids['es'], $fallback['post__in'], true ), 'A published translation must replace its original without duplication.' );
+	$result = get_posts(
+		array_merge(
+			$fallback,
+			array(
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => false,
+			)
+		)
+	);
+	$assert( in_array( $fixture_ids['en'], $result, true ) && ! in_array( $fixture_ids['es'], $result, true ), 'The final WordPress query must respect the selected translation.' );
+	$constrained = \Bonniestar_Art_Plugin\artwork_query_language_fallback( array_merge( $query, array( 'post__in' => array( 0 ) ) ) );
+	$assert( array( 0 ) === $constrained['post__in'], 'An empty constrained result must not expose all artworks.' );
 } catch ( \Throwable $error ) {
 	$failure = $error->getMessage();
 } finally {
@@ -126,6 +176,9 @@ try {
 	// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restore the rendering context modified by this test.
 	$GLOBALS['post'] = $old_post;
 	wp_set_current_user( $user_id );
+	if ( function_exists( 'PLL' ) ) {
+		PLL()->curlang = $old_language;
+	}
 	remove_filter( 'image_downsize', $downsize );
 	foreach ( $fixture_ids as $key => $fixture_id ) {
 		if ( 'image' === $key ) {

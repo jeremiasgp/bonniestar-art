@@ -24,6 +24,20 @@ function artwork_language_types( $types ) {
 add_filter( 'pll_get_post_types', __NAMESPACE__ . '\\artwork_language_types' );
 
 /**
+ * Include configured languages whose catalogues use untranslated originals.
+ *
+ * Polylang otherwise omits empty languages when matching browser preferences.
+ * Its own matching, cookie handling and redirect rules remain responsible.
+ *
+ * @param array $languages Languages considered by Polylang.
+ * @return array
+ */
+function artwork_browser_languages( $languages ) {
+	return function_exists( 'pll_languages_list' ) ? pll_languages_list( array( 'fields' => '' ) ) : $languages;
+}
+add_filter( 'pll_languages_for_browser_preferences', __NAMESPACE__ . '\\artwork_browser_languages' );
+
+/**
  * Share physical artwork data, but keep title/content independent.
  *
  * @param array $keys Meta keys to copy/synchronize.
@@ -79,3 +93,47 @@ function register_artwork_strings() {
 	}
 }
 add_action( 'admin_init', __NAMESPACE__ . '\\register_artwork_strings' );
+
+/**
+ * Keep untranslated artworks visible in Query blocks, without creating copies.
+ *
+ * Prefer published translations individually; otherwise retain the original.
+ * Explicit Query constraints, ordering and pagination remain in effect.
+ *
+ * @param array $query Query block's WP_Query arguments.
+ * @return array
+ */
+function artwork_query_language_fallback( $query ) {
+	if ( ARTWORK_TYPE !== ( $query['post_type'] ?? '' ) || ! function_exists( 'pll_current_language' ) ) {
+		return $query;
+	}
+	$current = pll_current_language();
+	$default = pll_default_language();
+	if ( ! $current || ! $default || $current === $default ) {
+		return $query;
+	}
+	$base = array(
+		'post_type'        => ARTWORK_TYPE,
+		'post_status'      => 'publish',
+		'posts_per_page'   => -1,
+		'fields'           => 'ids',
+		'no_found_rows'    => true,
+		'suppress_filters' => false,
+		'lang'             => $default,
+	);
+	$ids  = array();
+	foreach ( get_posts( $base ) as $id ) {
+		$translated = pll_get_post( $id, $current );
+		$ids[]      = $translated && 'publish' === get_post_status( $translated ) ? $translated : $id;
+	}
+	$base['lang'] = $current;
+	$ids          = array_values( array_unique( array_merge( $ids, get_posts( $base ) ) ) );
+	if ( ! empty( $query['post__in'] ) ) {
+		$ids = array_values( array_intersect( $ids, $query['post__in'] ) );
+	}
+	// An empty post__in would return all posts, so use an impossible ID instead.
+	$query['post__in'] = $ids ? $ids : array( 0 );
+	$query['lang']     = '';
+	return $query;
+}
+add_filter( 'query_loop_block_query_vars', __NAMESPACE__ . '\\artwork_query_language_fallback' );

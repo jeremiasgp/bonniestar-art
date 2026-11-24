@@ -1,7 +1,7 @@
 /*
 Theme Name: Bonniestar Art Theme
 Description: A warm, accessible artist portfolio using native WordPress blocks and CSS.
-Version: 1.3.0
+Version: 1.6.1
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
@@ -97,6 +97,8 @@ Tags: full-site-editing
 	inset-block-start: var(--wp-admin--admin-bar--height, 0px);
 	z-index: 30;
 	margin-block-start: 0;
+	margin-inline: calc(-1 * var(--wp--custom--layout--gutter));
+	padding-inline: var(--wp--custom--layout--gutter);
 	background: var(--wp--preset--color--surface);
 	border-block-end: 1px solid color-mix(in srgb, var(--wp--preset--color--muted) 20%, transparent);
 }
@@ -108,12 +110,13 @@ Tags: full-site-editing
 	padding-block: var(--wp--preset--spacing--30);
 }
 
-.bonniestar-art-header {
+.wp-block-group.bonniestar-art-header {
 	gap: var(--wp--preset--spacing--30);
 	min-block-size: 5.5rem;
 }
 
 .bonniestar-art-brand {
+	flex-shrink: 0;
 	gap: var(--wp--preset--spacing--30);
 	min-inline-size: 0;
 }
@@ -132,9 +135,31 @@ Tags: full-site-editing
 	object-fit: contain;
 }
 
-.bonniestar-art-header-actions {
+.bonniestar-art-header .bonniestar-art-header-actions {
 	flex-shrink: 0;
 	gap: var(--wp--preset--spacing--20);
+}
+
+.bonniestar-art-header-actions .bonniestar-art-language-switcher {
+	flex: 0 0 auto;
+	inline-size: auto;
+	min-inline-size: 0;
+}
+
+.bonniestar-art-language-switcher ul {
+	flex-wrap: nowrap;
+	gap: 0;
+}
+
+.bonniestar-art-language-switcher a {
+	inline-size: 2.75rem;
+	min-block-size: 2.75rem;
+	justify-content: center;
+	padding: 0;
+}
+
+.bonniestar-art-language-switcher a:hover {
+	opacity: 0.75;
 }
 
 .bonniestar-art-navigation .wp-block-navigation-item__content {
@@ -186,73 +211,78 @@ Tags: full-site-editing
 	margin-block-start: 0;
 }
 
-.bonniestar-art-hero {
-	padding-block: var(--wp--preset--spacing--60);
-	border-block-end: 1px solid var(--wp--preset--color--accent);
-}
-
-.bonniestar-art-hero h1 {
-	max-inline-size: 15ch;
-}
-
-.bonniestar-art-hero .wp-block-buttons {
-	margin-block-start: var(--wp--preset--spacing--50);
-}
-
-.bonniestar-art-eyebrow {
-	color: var(--wp--preset--color--accent);
-	font-size: var(--wp--preset--font-size--small);
+/* Portfolio components: normal document order flows down each CSS column. */
+.bonniestar-art-wordmark {
+	margin: 0;
+	font-size: clamp(1.5rem, 3vw, 2rem);
 	font-weight: 700;
+	line-height: 1.2;
+}
+
+.bonniestar-art-wordmark a {
+	color: var(--wp--preset--color--ink);
+	text-decoration: none;
+}
+
+.bonniestar-art-portfolio {
+	padding-block: var(--wp--preset--spacing--40) var(--wp--preset--spacing--60);
+}
+
+/* Scope to this Query block; never change other lists or editor galleries. */
+.bonniestar-art-portfolio-query .bonniestar-art-masonry {
+	display: block;
+	column-count: 1;
+	column-gap: var(--wp--custom--portfolio--gap);
+	padding: 0;
+	list-style: none;
+}
+
+.bonniestar-art-masonry > li {
+	display: inline-block;
+	inline-size: 100%;
+	margin-block: 0 var(--wp--custom--portfolio--gap);
+	break-inside: avoid;
+	vertical-align: top;
+}
+
+.bonniestar-art-card {
+	min-inline-size: 0;
+}
+
+.bonniestar-art-card .wp-block-post-featured-image {
+	margin: 0;
+}
+
+.bonniestar-art-card .wp-block-post-featured-image a,
+.bonniestar-art-card .wp-block-post-featured-image img {
+	display: block;
+	inline-size: 100%;
+}
+
+.bonniestar-art-card .wp-block-post-featured-image img {
+	block-size: auto;
+	transition: opacity 240ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.bonniestar-art-card .wp-block-post-featured-image a:hover img {
+		opacity: 0.82;
+	}
+}
+
+.bonniestar-art-card .wp-block-post-featured-image a:focus-visible img {
+	opacity: 0.82;
 }
 
 .bonniestar-art-section {
 	padding-block: var(--wp--preset--spacing--60);
 	margin-block-start: 0;
-}
-
-.bonniestar-art-section + .bonniestar-art-section {
 	border-block-start: 1px solid color-mix(in srgb, var(--wp--preset--color--muted) 20%, transparent);
 }
 
-.bonniestar-art-statement {
-	border-inline-start: 3px solid var(--wp--preset--color--accent);
-	padding-inline-start: var(--wp--preset--spacing--40);
-}
-
-.bonniestar-art-gallery-note {
-	color: var(--wp--preset--color--muted);
-}
-
-/* Only this portfolio gallery is adapted; other editor galleries keep their layout. */
-.wp-block-gallery.bonniestar-art-gallery {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: var(--wp--preset--spacing--50);
-	align-items: start;
-	margin-block-start: var(--wp--preset--spacing--50);
-}
-
-.wp-block-gallery.bonniestar-art-gallery > figure.wp-block-image {
-	inline-size: 100%;
-	width: 100%;
-	margin: 0;
-	flex-grow: 0;
-}
-
-.wp-block-gallery.bonniestar-art-gallery > figure.wp-block-image img {
-	block-size: auto;
-	object-fit: contain;
-}
-
-.wp-block-gallery.bonniestar-art-gallery > figure.wp-block-image figcaption {
-	position: static;
-	max-block-size: none;
-	margin-block-start: var(--wp--preset--spacing--20);
-	padding: 0;
-	background: none;
-	color: var(--wp--preset--color--muted);
+.bonniestar-art-eyebrow {
+	color: var(--wp--preset--color--accent);
 	font-size: var(--wp--preset--font-size--small);
-	text-align: start;
 }
 
 .wp-site-blocks > footer.wp-block-template-part {
@@ -265,10 +295,32 @@ Tags: full-site-editing
 	padding-block: var(--wp--preset--spacing--40);
 }
 
-/* Tablet: two artworks per row, still using the mobile menu. */
-@media (min-width: 40rem) {
-	.wp-block-gallery.bonniestar-art-gallery {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+/* 25rem (400px): two useful image widths after gutters and the column gap. */
+@media (min-width: 25rem) {
+	.bonniestar-art-portfolio-query .bonniestar-art-masonry {
+		column-count: 2;
+	}
+}
+
+/* Keep all header controls accessible on the narrowest supported screens. */
+@media (max-width: 25rem) {
+	.bonniestar-art-wordmark {
+		font-size: 1.25rem;
+	}
+
+	.wp-block-group.bonniestar-art-header {
+		gap: var(--wp--preset--spacing--20);
+	}
+
+	.bonniestar-art-header .bonniestar-art-header-actions {
+		gap: 0;
+	}
+}
+
+/* Leave room for two 44px flag links alongside the other mobile controls. */
+@media (max-width: 22rem) {
+	.bonniestar-art-wordmark {
+		font-size: 1.125rem;
 	}
 }
 
@@ -283,14 +335,14 @@ Tags: full-site-editing
 	}
 }
 
-/* Desktop: full navigation and three artworks per row. */
+/* Desktop: full navigation and three masonry columns. */
 @media (min-width: 60rem) {
-	.bonniestar-art-header-actions {
+	.bonniestar-art-header .bonniestar-art-header-actions {
 		gap: var(--wp--preset--spacing--50);
 	}
 
-	.wp-block-gallery.bonniestar-art-gallery {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+	.bonniestar-art-portfolio-query .bonniestar-art-masonry {
+		column-count: 3;
 	}
 }
 
@@ -302,6 +354,7 @@ Tags: full-site-editing
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.bonniestar-art-card .wp-block-post-featured-image img,
 	.bonniestar-art-social .wp-social-link,
 	.wp-lightbox-overlay,
 	.wp-lightbox-overlay * {

@@ -6,7 +6,8 @@
     "layout": { "contentSize": "42rem", "wideSize": "76rem" },
     "custom": {
       "layout": { "gutter": "clamp(1rem, 4vw, 3rem)" },
-      "header": { "anchorOffset": "9rem" }
+      "header": { "anchorOffset": "9rem" },
+      "portfolio": { "gap": "clamp(1.5rem, 3vw, 2.5rem)" }
     },
     "blocks": {
       "core/image": { "lightbox": { "enabled": false, "allowEditing": false } }
@@ -14,7 +15,7 @@
     "color": {
       "defaultPalette": false,
       "palette": [
-        { "slug": "surface", "name": "Surface", "color": "#FFFFFA" },
+        { "slug": "surface", "name": "Surface", "color": "#f8f1f2" },
         { "slug": "ink", "name": "Ink", "color": "#080705" },
         { "slug": "muted", "name": "Muted", "color": "#40434E" },
         { "slug": "accent", "name": "Accent", "color": "#912F40" },

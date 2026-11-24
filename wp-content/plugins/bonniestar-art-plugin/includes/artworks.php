@@ -191,3 +191,63 @@ function artwork_gallery_shortcode() {
 	return $output . '</div>';
 }
 add_shortcode( 'bonniestar_art_obra_gallery', __NAMESPACE__ . '\\artwork_gallery_shortcode' );
+
+/**
+ * Turn an opted-in artwork preview into its own lightbox gallery.
+ *
+ * Hidden details use an inline placeholder, so full images load only on demand.
+ * The unenhanced main link opens the image when JavaScript is unavailable.
+ *
+ * @param string    $content Rendered featured image.
+ * @param array     $parsed  Parsed block attributes.
+ * @param \WP_Block $block   Block providing the query's post context.
+ * @return string
+ */
+function artwork_preview_lightbox( $content, $parsed, $block ) {
+	$classes = explode( ' ', $parsed['attrs']['className'] ?? '' );
+	$id      = absint( $block->context['postId'] ?? 0 );
+	if ( ! lightbox_enabled() || ! in_array( 'is-artwork-lightbox', $classes, true ) || ARTWORK_TYPE !== get_post_type( $id ) ) {
+		return $content;
+	}
+	$featured = get_post_thumbnail_id( $id );
+	$full     = wp_get_attachment_image_url( $featured, 'full' );
+	if ( ! $full ) {
+		return $content;
+	}
+	$title     = get_the_title( $id );
+	$facts     = array( $title );
+	$technique = get_post_meta( $id, TECHNIQUE_META, true );
+	$choices   = artwork_techniques();
+	if ( isset( $choices[ $technique ] ) ) {
+		$facts[] = artwork_label( $choices[ $technique ] );
+	}
+	$dimensions = get_post_meta( $id, DIMENSIONS_META, true );
+	if ( $dimensions ) {
+		$facts[] = $dimensions;
+	}
+	$caption = implode( ' · ', $facts );
+	$html    = new \WP_HTML_Tag_Processor( $content );
+	if ( ! $html->next_tag( 'A' ) ) {
+		return $content;
+	}
+	$html->set_attribute( 'href', $full );
+	$html->set_attribute( 'aria-label', $caption );
+	if ( $html->next_tag( 'IMG' ) ) {
+		$html->set_attribute( 'alt', $title );
+		$html->set_attribute( 'data-gallery-lightbox-src', $full );
+	}
+	$content = str_replace( '</figure>', '<figcaption hidden>' . esc_html( $caption ) . '</figcaption></figure>', $html->get_updated_html() );
+	$output  = '<div class="artwork-preview" data-gallery-lightbox>' . $content . '<div hidden>';
+	$images  = sanitize_artwork_gallery( get_post_meta( $id, GALLERY_META, true ) );
+	foreach ( array_values( array_diff( $images, array( $featured ) ) ) as $index => $image_id ) {
+		$source = wp_get_attachment_image_url( $image_id, 'full' );
+		if ( ! $source ) {
+			continue;
+		}
+		/* translators: %d: Detail image number within this artwork. */
+		$detail  = $caption . ' — ' . sprintf( __( 'Detalle %d', 'bonniestar-art-plugin' ), $index + 1 );
+		$output .= '<figure><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-gallery-lightbox-src="' . esc_url( $source ) . '" alt="' . esc_attr( $detail ) . '"><figcaption>' . esc_html( $detail ) . '</figcaption></figure>';
+	}
+	return $output . '</div></div>';
+}
+add_filter( 'render_block_core/post-featured-image', __NAMESPACE__ . '\\artwork_preview_lightbox', 10, 3 );

@@ -27,10 +27,51 @@ sin requerir duplicar el archivo físico. Los textos públicos de técnica y las
 etiquetas se pueden traducir en Idiomas → Traducciones, grupo «Obras».
 El registro y los campos también funcionan si se desactiva Polylang.
 
+Los bloques Consulta de Obras conservan las piezas del idioma de respaldo cuando
+falta una traducción publicada. Cuando existe, muestran la traducción en lugar
+del original; también incluyen las Obras creadas directamente en el idioma actual.
+No crean copias ni cambian el idioma de los registros. Mantienen filtros,
+ordenamiento y paginación del bloque. Este respaldo corresponde al catálogo:
+no traduce automáticamente los títulos, las páginas ni los textos del tema.
+
 El tema incluye `single-bonniestar_art_obra.html`, sin fecha editorial. Utiliza
 los shortcodes `[bonniestar_art_obra_details]` y `[bonniestar_art_obra_gallery]`
 para mostrar metadatos y galería; se pueden insertar con el bloque Shortcode
-en otra plantilla. El listado usa el archivo nativo; no se modifica la portada.
+en otra plantilla. El tema consulta las Obras publicadas para su grilla de portada.
+
+En bloques Imagen destacada de una Obra, la clase `is-artwork-lightbox` activa
+la galería de vista previa: imagen principal seguida de todos los detalles,
+sin duplicar la principal si ya está entre ellos. Cada tarjeta forma un grupo
+independiente. El visor muestra título, técnica disponible y medidas; las imágenes
+de detalle se representan con placeholders ocultos y solo se descargan al abrirlas.
+Los bloques sin esa clase conservan su enlace habitual. La ficha individual sigue
+disponible por URL; la portada abre el visor. Sin JavaScript, el enlace abre la
+imagen principal. El filtro de desactivación del lightbox también desactiva esta
+integración, conservando entonces el enlace original de la plantilla.
+
+### Importación explícita del catálogo local
+
+`tools/import-catalog.php` es una herramienta para WP-CLI, nunca cargada por el
+plugin. Solo funciona en el entorno `local`. Recibe un manifiesto JSON y una
+carpeta de imágenes montados de solo lectura; no incorpora medios al repositorio.
+
+Cada entrada del manifiesto contiene `titulo`, `medidas`, `principal` (basename
+`obra_*.jpg`) y `detalles` (lista ordenada de basenames). Con la carpeta externa
+montada como `/catalog`, ejecutar explícitamente:
+
+```text
+wp eval-file /var/www/html/wp-content/plugins/bonniestar-art-plugin/tools/import-catalog.php /catalog/manifest.json /catalog
+```
+
+Valida las rutas locales antes de importar, crea Obras en español y usa las APIs
+de medios de WordPress para copiar y generar tamaños responsive. Asocia imagen
+destacada, medidas y detalles; no infiere la técnica. Publica cada pieza nueva
+cuando termina de importar sus imágenes.
+
+Un marcador de origen permite repetir la ejecución sin duplicar Obras ni medios.
+Conserva títulos, contenido, medidas e imágenes destacadas ya editados y combina
+los detalles sin duplicados. Detiene la ejecución si un slug existente pertenece
+a otra obra. No elimina registros ni archivos y no se ejecuta durante setup.
 
 ### REST
 
@@ -47,8 +88,10 @@ Si un futuro plugin necesita REST anónima, habrá que definir una excepción ex
 npm run wp -- eval-file /var/www/html/wp-content/plugins/bonniestar-art-plugin/tests/artworks.php
 ```
 
-La prueba requiere Polylang con es/en/fr y un administrador existente; crea
-borradores y un registro de medio temporales, y los elimina en `finally`.
+La prueba requiere el proyecto local, Polylang con es/en/fr y un administrador
+existente. Crea Obras y un registro de medio temporales; publica brevemente las
+Obras de prueba para verificar el reemplazo por traducciones y elimina todos
+sus registros en `finally`.
 
 ## Lightbox de imágenes y galerías
 

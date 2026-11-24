@@ -11,20 +11,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$bonniestar_art_home_url     = function_exists( 'pll_home_url' ) ? pll_home_url() : home_url( '/' );
 $bonniestar_art_header_links = array(
 	array(
 		'label' => __( 'Obras', 'bonniestar-art-theme' ),
-		'url'   => home_url( '/#obras' ),
+		'url'   => $bonniestar_art_home_url,
 		'kind'  => 'custom',
 	),
 	array(
-		'label' => __( 'La mirada', 'bonniestar-art-theme' ),
-		'url'   => home_url( '/#mirada' ),
+		'label' => __( 'About', 'bonniestar-art-theme' ),
+		'url'   => $bonniestar_art_home_url . '#about',
 		'kind'  => 'custom',
 	),
 	array(
 		'label' => __( 'Contacto', 'bonniestar-art-theme' ),
-		'url'   => home_url( '/#contacto' ),
+		'url'   => $bonniestar_art_home_url . '#contacto',
 		'kind'  => 'custom',
 	),
 );
@@ -33,8 +34,9 @@ $bonniestar_art_header_links = array(
 <div class="wp-block-group alignwide bonniestar-art-header">
 	<!-- wp:group {"className":"bonniestar-art-brand","layout":{"type":"flex","flexWrap":"nowrap"}} -->
 	<div class="wp-block-group bonniestar-art-brand">
-		<!-- wp:site-logo {"width":56,"shouldSyncIcon":false} /-->
-		<!-- wp:site-title {"level":0,"fontSize":"large"} /-->
+		<!-- wp:paragraph {"className":"bonniestar-art-wordmark"} -->
+		<p class="bonniestar-art-wordmark"><a href="<?php echo esc_url( $bonniestar_art_home_url ); ?>">Bonnie Star</a></p>
+		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->
 	<!-- wp:group {"className":"bonniestar-art-header-actions","layout":{"type":"flex","flexWrap":"nowrap"}} -->
@@ -46,9 +48,10 @@ $bonniestar_art_header_links = array(
 		<!-- /wp:navigation -->
 		<!-- wp:social-links {"className":"is-style-logos-only bonniestar-art-social","layout":{"type":"flex","flexWrap":"nowrap"}} -->
 		<ul class="wp-block-social-links is-style-logos-only bonniestar-art-social">
-			<!-- wp:social-link {"service":"instagram"} /-->
+			<!-- wp:social-link {"url":"https://www.instagram.com/bonnie.star.art/","service":"instagram"} /-->
 		</ul>
 		<!-- /wp:social-links -->
+		<!-- wp:polylang/language-switcher {"layout":"horizontal","show_labels":"","show_flags":true,"hide_current":true,"hide_if_no_translation":false,"flag_width":"22px","className":"bonniestar-art-language-switcher"} /-->
 	</div>
 	<!-- /wp:group -->
 </div>

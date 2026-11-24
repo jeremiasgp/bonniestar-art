@@ -1,53 +1,74 @@
-# Bonniestar Art: primera dirección visual
+# Bonnie Star: portfolio de obras
 
-Tema de bloques para un portfolio de óleo y acrílico, hiperrealismo e
-impresionismo. Fondo marfil, acentos borgoña, composición sin sidebars y obras
-sin recortar. Los textos de portada son una propuesta editorial inicial.
+La home muestra las Obras publicadas, con una grilla masonry inspirada en
+https://www.katrinapallon.com/paintings-2024-2026. Conserva las proporciones
+de cada imagen. Cada obra abre un lightbox con su imagen principal y detalles.
+Los títulos y medidas aparecen dentro del visor. About y Contacto
+completan la portada con información del catálogo de la artista.
 
-## Editar el diseño
+## Arquitectura y edición
 
-- **Colores:** editar solo `settings.color.palette` en `theme.json`. El tema
-  referencia sus variables `--wp--preset--color--surface`, `ink`, `muted`,
-  `accent` y `accent-strong`; no duplicar códigos de color en CSS o bloques.
-- **Tipografía:** Atkinson Hyperlegible alojada localmente, con licencia OFL
-  incluida en `assets/fonts/atkinson-hyperlegible/`. La familia, pesos,
-  tamaños y espaciados están en `theme.json`. Texto base de 18 px, interlineado
-  1.7 y columna de lectura de hasta 42 rem. Evitar texto justificado o párrafos
-  largos en mayúsculas. Una fuente por sí sola no garantiza accesibilidad.
-- **Responsive:** en `style.css`, galería de una columna por defecto, dos desde
-  40 rem y tres desde 60 rem. El menú completo aparece desde 60 rem; por debajo
-  se usa el menú móvil nativo de WordPress. Son límites de layout, no modelos
-  concretos de dispositivo. La tipografía y los márgenes se adaptan fluidamente.
-- **Header:** sticky, con bloque Logo del sitio y nombre a la izquierda;
-  navegación e Instagram a la derecha. Cargar el logo desde el editor. El bloque
-  Instagram espera una URL real: WordPress no muestra el icono público hasta
-  completarla. No se incluyó una cuenta de ejemplo.
-- **Footer:** nombre y descripción corta del sitio, configurables en WordPress.
+- `theme.json` es la fuente de colores, tipografía local, espaciados y tokens.
+  El espacio entre obras está en `settings.custom.portfolio.gap`.
+- `style.css` conserva la capa `starter-base` para los fundamentos y componentes
+  con clases propias fuera de la capa, para sobreescribir los defaults de core.
+  Las propiedades son lógicas; los colores se referencian mediante tokens.
+- `patterns/artist-home.php` usa bloques nativos. El bloque Consulta muestra
+  18 Obras por página, ordenadas por título, con paginación. Respeta el idioma
+  actual cuando Polylang está activo.
+- `.bonniestar-art-masonry` usa columnas CSS: una por defecto, dos desde 25 rem
+  y tres desde 60 rem. Cada tarjeta se mantiene completa y la lectura sigue el
+  documento: de arriba abajo en una columna, luego la siguiente. No requiere
+  JavaScript ni soporte experimental de CSS masonry.
+- El corte de 25 rem (400 px con fuente raíz de 16 px) deja dos imágenes de unos
+  170 px después de los márgenes y la separación. Hasta 399 px se usa una columna;
+  desde 60 rem, tres. El hover reduce suavemente la opacidad durante 240 ms y
+  respeta la preferencia de movimiento reducido. El teclado conserva foco visible.
+- `patterns/site-header.php` contiene la marca de texto Bonnie Star, enlaces a
+  Obras, About y Contacto e Instagram. El menú móvil usa el diálogo nativo de
+  WordPress; el encabezado sticky contempla la barra de administración.
+  Su fondo y borde abarcan todo el viewport, conservando la alineación del
+  contenido. No tiene degradado ni sombra inferior.
+- El header incorpora el bloque nativo de Polylang con banderas enlazadas de los
+  otros idiomas (ES/EN/FR). Oculta el idioma actual y conserva los nombres
+  accesibles y áreas de interacción de 44 px. El nombre y la navegación regresan
+  a la portada del idioma actual. El selector conserva traducciones al navegar
+  desde una ficha; si no hay traducción, Polylang enlaza a la portada de destino.
+  La detección del navegador se configura en Idiomas → Ajustes de Polylang;
+  usa el navegador en la primera visita y recuerda la elección posterior.
+  Las banderas se configuran en Idiomas → Idiomas y usan los SVG locales de
+  Polylang; la instalación actual asigna España, Estados Unidos y Francia según
+  los locales es_ES, en_US y fr_FR.
 
-## Cargar las obras
+La configuración local usa enlaces amigables (`/%postname%/`) para habilitar las
+rutas de idioma `/en/` y `/fr/` y la detección nativa de Polylang. Español es el
+idioma de respaldo. Los Query de Obras muestran la traducción publicada de cada
+pieza o su original cuando falta esa traducción, sin duplicar registros. Los textos
+del sitio y los títulos siguen necesitando sus traducciones editoriales.
 
-1. Abrir Apariencia → Editor → Plantillas → Página de inicio.
-2. En la sección «La galería», seleccionar el bloque Galería vacío desde la
-   vista de lista y subir las imágenes reales. No se incluyen obras de muestra.
-3. Conservar la clase `bonniestar-art-gallery` y desactivar el recorte. Completar
-   el texto alternativo y una leyenda con título, técnica y medidas.
-4. Quitar el párrafo provisional cuando la galería tenga contenido.
-5. El plugin amplía las imágenes sin enlace o con enlace al archivo en su lightbox
-   JavaScript. Las URLs de páginas/adjuntos conservan su navegación. Usar la clase
-   `no-lightbox` en una imagen o galería para excluirla. El lightbox nativo se
-   deshabilita durante el render para evitar dos modales sobre la misma imagen.
+Para agregar o modificar una pieza, usar **Obras** en el administrador: título,
+imagen destacada, técnica, medidas, contenido y galería de detalles. La home
+se actualiza al publicar. No hay que duplicar imágenes en una galería manual.
+La técnica de cada obra queda vacía si la fuente no la especifica.
 
-La portada se define en `templates/front-page.html` y el patrón `artist-home.php`;
-se edita como plantilla, no como contenido de una página. El patrón `site-header.php`
-genera enlaces a la portada que también funcionan desde páginas interiores y
-subdirectorios. Después de guardar una personalización en el Editor, exportarla
-al código si debe formar parte del tema: la versión guardada en la base de datos
-prevalece sobre estos archivos.
+`single-bonniestar_art_obra.html` muestra imagen principal, datos y detalles con
+el lightbox del plugin. La ficha se conserva para accesos directos por URL.
+La portada usa `is-artwork-lightbox` en Imagen destacada: el plugin agrupa las
+imágenes de esa Obra y descarga cada imagen grande cuando se abre. El modelo de
+contenido, las traducciones y los metadatos siguen perteneciendo al plugin.
 
-Se conservan `page.html` y `single.html` para páginas y entradas. Las obras se
-crean en Obras desde el administrador y usan `single-bonniestar_art_obra.html`,
-con técnica, medidas, cuerpo y galería del plugin. La galería de portada sigue
-siendo una selección manual; no se conecta automáticamente al listado de obras.
+About usa únicamente la descripción y el contacto del catálogo; se puede ampliar
+con una biografía aprobada en el Editor del sitio. El logo provisional es texto.
+Título y descripción del sitio se administran en Ajustes → Generales.
 
-Antes de publicar: cargar logo, obras, URL de Instagram y datos reales de contacto;
-revisar textos y probar teclado, modal, zoom de texto y Editor en móvil y escritorio.
+Los cambios guardados en el Editor del sitio prevalecen sobre los archivos del
+tema. Exportar los cambios deseados a código para que sean reutilizables; no
+borrar personalizaciones de base de datos automáticamente.
+
+## Verificación
+
+Ejecutar `npm run verify:static`, `npm test` y `npm run verify` con Docker activo.
+Revisar en navegador la home en móvil y escritorio, el menú con teclado,
+las fichas y el lightbox. PHP lint y WPCS no sustituyen la revisión visual ni
+la inspección del Editor. Las imágenes originales y el PDF no forman parte del
+tema: la biblioteca y los registros de Obras se almacenan en volúmenes Docker.
