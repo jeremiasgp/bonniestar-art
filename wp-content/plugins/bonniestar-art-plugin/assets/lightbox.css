@@ -77,12 +77,106 @@ dialog.wp-gallery-lightbox {
 }
 
 .wp-gallery-lightbox__stage {
+	grid-area: image;
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	min-inline-size: 0;
 	min-block-size: 0;
 	touch-action: pan-y pinch-zoom;
+}
+
+.wp-gallery-lightbox__body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: auto minmax(0, 1fr) auto auto;
+	grid-template-areas: "title" "image" "thumbnails" "description";
+	gap: 0.75rem;
+	min-inline-size: 0;
+	min-block-size: 0;
+}
+
+.wp-gallery-lightbox__title {
+	grid-area: title;
+	max-block-size: 14dvh;
+	margin: 0;
+	overflow: auto;
+	font-size: clamp(1.25rem, 2vw, 1.75rem);
+	font-weight: 400;
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
+
+.wp-gallery-lightbox__description {
+	grid-area: description;
+	max-block-size: 18dvh;
+	margin: 0;
+	overflow: auto;
+	font-size: 1rem;
+	line-height: 1.6;
+	white-space: pre-line;
+}
+
+.wp-gallery-lightbox__thumbnails {
+	grid-area: thumbnails;
+	display: flex;
+	gap: 0.5rem;
+	min-inline-size: 0;
+	min-block-size: 0;
+	padding: 0.25rem;
+	overflow: auto;
+	overscroll-behavior: contain;
+}
+
+.wp-gallery-lightbox__thumbnail {
+	box-sizing: border-box;
+	display: flex;
+	flex: 0 0 4.5rem;
+	align-items: center;
+	justify-content: center;
+	inline-size: 4.5rem;
+	block-size: 4.5rem;
+	margin: 0;
+	padding: 0.25rem;
+	border: 2px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: var(--gallery-lightbox-accent, LinkText);
+	cursor: pointer;
+}
+
+.wp-gallery-lightbox__thumbnail:hover {
+	border-color: var(--gallery-lightbox-text, CanvasText);
+}
+
+.wp-gallery-lightbox__thumbnail[aria-current="true"] {
+	border-color: var(--gallery-lightbox-accent, LinkText);
+}
+
+.wp-gallery-lightbox__thumbnail img {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: contain;
+}
+
+@media (min-width: 60rem) {
+	.wp-gallery-lightbox__body {
+		grid-template-columns: clamp(11rem, 20vw, 18rem) minmax(0, 1fr) 5.5rem;
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas: "title image thumbnails" "description image thumbnails";
+		gap: 1.5rem;
+	}
+
+	.wp-gallery-lightbox__description {
+		max-block-size: none;
+	}
+
+	.wp-gallery-lightbox__thumbnails {
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 .wp-gallery-lightbox .wp-gallery-lightbox__image {

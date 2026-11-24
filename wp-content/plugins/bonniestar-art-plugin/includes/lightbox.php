@@ -32,12 +32,12 @@ function enqueue_lightbox() {
 	}
 
 	$base = plugins_url( 'assets/', dirname( __DIR__ ) . '/bonniestar-art-plugin.php' );
-	wp_enqueue_style( 'wp-gallery-lightbox', $base . 'lightbox.css', array(), VERSION );
+	wp_enqueue_style( 'wp-gallery-lightbox', $base . 'lightbox.css', array(), (string) filemtime( dirname( __DIR__ ) . '/assets/lightbox.css' ) );
 	wp_enqueue_script(
 		'wp-gallery-lightbox',
 		$base . 'lightbox.js',
 		array(),
-		VERSION,
+		(string) filemtime( dirname( __DIR__ ) . '/assets/lightbox.js' ),
 		array(
 			'strategy'  => 'defer',
 			'in_footer' => false,
@@ -47,16 +47,17 @@ function enqueue_lightbox() {
 		'wp-gallery-lightbox',
 		'wpGalleryLightbox',
 		array(
-			'title'    => __( 'Visor de imágenes', 'bonniestar-art-plugin' ),
-			'open'     => __( 'Ampliar imagen', 'bonniestar-art-plugin' ),
-			'close'    => __( 'Cerrar', 'bonniestar-art-plugin' ),
-			'previous' => __( 'Imagen anterior', 'bonniestar-art-plugin' ),
-			'next'     => __( 'Imagen siguiente', 'bonniestar-art-plugin' ),
-			'loading'  => __( 'Cargando imagen…', 'bonniestar-art-plugin' ),
-			'error'    => __( 'No se pudo cargar la imagen.', 'bonniestar-art-plugin' ),
-			'original' => __( 'Abrir imagen original', 'bonniestar-art-plugin' ),
+			'title'      => __( 'Visor de imágenes', 'bonniestar-art-plugin' ),
+			'open'       => __( 'Ampliar imagen', 'bonniestar-art-plugin' ),
+			'close'      => __( 'Cerrar', 'bonniestar-art-plugin' ),
+			'previous'   => __( 'Imagen anterior', 'bonniestar-art-plugin' ),
+			'next'       => __( 'Imagen siguiente', 'bonniestar-art-plugin' ),
+			'loading'    => __( 'Cargando imagen…', 'bonniestar-art-plugin' ),
+			'error'      => __( 'No se pudo cargar la imagen.', 'bonniestar-art-plugin' ),
+			'original'   => __( 'Abrir imagen original', 'bonniestar-art-plugin' ),
+			'thumbnails' => __( 'Miniaturas de la obra', 'bonniestar-art-plugin' ),
 			/* translators: 1: Current image number, 2: Total images. */
-			'position' => __( '%1$s de %2$s', 'bonniestar-art-plugin' ),
+			'position'   => __( '%1$s de %2$s', 'bonniestar-art-plugin' ),
 		)
 	);
 }
@@ -115,6 +116,10 @@ function lightbox_attachment_source( $attributes, $attachment ) {
 		$full = wp_get_attachment_image_src( $attachment->ID, 'full' );
 		if ( $full ) {
 			$attributes['data-gallery-lightbox-src'] = esc_url_raw( $full[0] );
+		}
+		$thumbnail = wp_get_attachment_image_url( $attachment->ID, 'medium' );
+		if ( $thumbnail ) {
+			$attributes['data-gallery-lightbox-thumbnail'] = esc_url_raw( $thumbnail );
 		}
 	}
 	return $attributes;

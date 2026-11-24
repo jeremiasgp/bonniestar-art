@@ -162,6 +162,10 @@ Tags: full-site-editing
 	opacity: 0.75;
 }
 
+.bonniestar-art-header .bonniestar-art-navigation .bonniestar-art-language-switcher-mobile {
+	display: none;
+}
+
 .bonniestar-art-navigation .wp-block-navigation-item__content {
 	display: inline-flex;
 	align-items: center;
@@ -176,7 +180,7 @@ Tags: full-site-editing
 	min-block-size: 2.75rem;
 }
 
-.bonniestar-art-navigation .wp-block-navigation__responsive-container.is-menu-open {
+.bonniestar-art-header .bonniestar-art-navigation .wp-block-navigation__responsive-container.is-menu-open {
 	background: var(--wp--preset--color--surface);
 	color: var(--wp--preset--color--ink);
 	padding: var(--wp--preset--spacing--40);
@@ -214,14 +218,22 @@ Tags: full-site-editing
 /* Portfolio components: normal document order flows down each CSS column. */
 .bonniestar-art-wordmark {
 	margin: 0;
-	font-size: clamp(1.5rem, 3vw, 2rem);
-	font-weight: 700;
-	line-height: 1.2;
+	line-height: 1;
+	text-align: start;
 }
 
-.bonniestar-art-wordmark a {
-	color: var(--wp--preset--color--ink);
+.bonniestar-art-wordmark .brand-logo {
+	display: inline-block;
+	font-family: var(--wp--preset--font-family--glacial-indifference);
+	font-size: var(--wp--custom--brand--font-size);
+	font-weight: 400;
+	letter-spacing: var(--wp--custom--brand--letter-spacing);
+	word-spacing: var(--wp--custom--brand--word-spacing);
+	line-height: var(--wp--custom--brand--line-height);
+	text-transform: uppercase;
 	text-decoration: none;
+	white-space: nowrap;
+	color: var(--wp--preset--color--ink);
 }
 
 .bonniestar-art-portfolio {
@@ -302,10 +314,10 @@ Tags: full-site-editing
 	}
 }
 
-/* Keep all header controls accessible on the narrowest supported screens. */
-@media (max-width: 25rem) {
-	.bonniestar-art-wordmark {
-		font-size: 1.25rem;
+/* Match the core navigation's JS-powered dialog to the layout breakpoint. */
+@media (max-width: 59.999rem) {
+	.bonniestar-art-wordmark .brand-logo {
+		font-size: var(--wp--custom--brand--mobile-font-size);
 	}
 
 	.wp-block-group.bonniestar-art-header {
@@ -315,17 +327,19 @@ Tags: full-site-editing
 	.bonniestar-art-header .bonniestar-art-header-actions {
 		gap: 0;
 	}
-}
 
-/* Leave room for two 44px flag links alongside the other mobile controls. */
-@media (max-width: 22rem) {
-	.bonniestar-art-wordmark {
-		font-size: 1.125rem;
+	.bonniestar-art-header-actions .bonniestar-art-language-switcher-desktop {
+		display: none;
 	}
-}
 
-/* Match the core navigation's JS-powered dialog to the layout breakpoint. */
-@media (max-width: 59.999rem) {
+	.bonniestar-art-navigation {
+		order: 1;
+	}
+
+	.bonniestar-art-header .bonniestar-art-navigation .bonniestar-art-language-switcher-mobile {
+		display: flex;
+	}
+
 	.bonniestar-art-navigation .wp-block-navigation__responsive-container-open {
 		display: inline-flex;
 	}
@@ -335,12 +349,19 @@ Tags: full-site-editing
 	}
 }
 
-/* Desktop: full navigation and three masonry columns. */
-@media (min-width: 60rem) {
-	.bonniestar-art-header .bonniestar-art-header-actions {
-		gap: var(--wp--preset--spacing--50);
+/* Preserve the 22px spaced logo and two 44px controls at 320px. */
+@media (max-width: 22rem) {
+	.wp-site-blocks > header.wp-block-template-part {
+		padding-inline: var(--wp--preset--spacing--20);
 	}
 
+	.wp-block-group.bonniestar-art-header {
+		gap: 0;
+	}
+}
+
+/* Desktop: full navigation and three masonry columns. */
+@media (min-width: 60rem) {
 	.bonniestar-art-portfolio-query .bonniestar-art-masonry {
 		column-count: 3;
 	}

@@ -13,6 +13,9 @@ completan la portada con información del catálogo de la artista.
 - `style.css` conserva la capa `starter-base` para los fundamentos y componentes
   con clases propias fuera de la capa, para sobreescribir los defaults de core.
   Las propiedades son lógicas; los colores se referencian mediante tokens.
+  La URL del CSS usa la fecha de modificación del archivo como versión de caché,
+  tanto en el frontend como en el Editor. Guardar cambios y recargar solicita
+  la nueva versión sin tener que editar manualmente la cabecera del tema.
 - `patterns/artist-home.php` usa bloques nativos. El bloque Consulta muestra
   18 Obras por página, ordenadas por título, con paginación. Respeta el idioma
   actual cuando Polylang está activo.
@@ -29,6 +32,15 @@ completan la portada con información del catálogo de la artista.
   WordPress; el encabezado sticky contempla la barra de administración.
   Su fondo y borde abarcan todo el viewport, conservando la alineación del
   contenido. No tiene degradado ni sombra inferior.
+- El logo `.brand-logo` usa Glacial Indifference Regular 400 en mayúsculas,
+  tracking 0.30 em, espacio de palabra 0.15 em e interlineado 1.1. La fuente
+  WOFF2 es local y su licencia y procedencia están en
+  `assets/fonts/glacial-indifference/`. La familia se registra en `theme.json`;
+  sus medidas están en `settings.custom.brand`. El color usa el token `ink`.
+  El logo mide 26 px desde 60 rem y 22 px por debajo, siempre a la izquierda.
+  En móvil el header conserva una fila: Instagram y el hamburger quedan a la
+  derecha. Hasta 22 rem se reducen los márgenes internos para conservar los
+  espaciados del logo y los controles de 44 px sin desbordar a 320 px.
 - El header incorpora el bloque nativo de Polylang con banderas enlazadas de los
   otros idiomas (ES/EN/FR). Oculta el idioma actual y conserva los nombres
   accesibles y áreas de interacción de 44 px. El nombre y la navegación regresan
@@ -36,6 +48,8 @@ completan la portada con información del catálogo de la artista.
   desde una ficha; si no hay traducción, Polylang enlaza a la portada de destino.
   La detección del navegador se configura en Idiomas → Ajustes de Polylang;
   usa el navegador en la primera visita y recuerda la elección posterior.
+  Las banderas se muestran junto a la navegación en escritorio; en móvil están
+  dentro del menú desplegable mediante el bloque nativo de idiomas de navegación.
   Las banderas se configuran en Idiomas → Idiomas y usan los SVG locales de
   Polylang; la instalación actual asigna España, Estados Unidos y Francia según
   los locales es_ES, en_US y fr_FR.

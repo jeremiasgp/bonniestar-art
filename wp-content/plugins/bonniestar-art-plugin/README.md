@@ -44,6 +44,19 @@ la galería de vista previa: imagen principal seguida de todos los detalles,
 sin duplicar la principal si ya está entre ellos. Cada tarjeta forma un grupo
 independiente. El visor muestra título, técnica disponible y medidas; las imágenes
 de detalle se representan con placeholders ocultos y solo se descargan al abrirlas.
+El visor presenta título y descripción a la izquierda, imagen completa al centro
+y miniaturas verticales a la derecha desde 60 rem. Por debajo usa título, imagen,
+miniaturas horizontales y descripción, en ese orden. El borde y `aria-current`
+identifican la miniatura seleccionada, incluida la principal. Las miniaturas usan
+el tamaño `medium` de WordPress y se cargan al abrir el visor.
+
+La descripción reúne técnica, medidas y hasta 45 palabras del contenido de la
+Obra; se completa editando ese contenido en el administrador. No inventa texto
+si el contenido está vacío. Los datos viajan como texto escapado mediante
+`data-gallery-lightbox-title` y `data-gallery-lightbox-description`, y la fuente
+de miniatura mediante `data-gallery-lightbox-thumbnail`. Otras galerías pueden
+usar los mismos atributos; sin ellos se conservan los textos alternativos y leyendas.
+
 Los bloques sin esa clase conservan su enlace habitual. La ficha individual sigue
 disponible por URL; la portada abre el visor. Sin JavaScript, el enlace abre la
 imagen principal. El filtro de desactivación del lightbox también desactiva esta

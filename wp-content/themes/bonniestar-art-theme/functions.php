@@ -19,7 +19,7 @@ function bonniestar_art_theme_enqueue_styles() {
 		'bonniestar-art-theme',
 		get_theme_file_uri( 'style.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) filemtime( get_theme_file_path( 'style.css' ) )
 	);
 }
 add_action( 'enqueue_block_assets', 'bonniestar_art_theme_enqueue_styles' );

@@ -18,6 +18,7 @@ const html = `<!doctype html><html><head><meta name="viewport" content="width=de
 <script>window.wpGalleryLightbox=${JSON.stringify(labels)}</script><script defer src="/lightbox.js"></script></head><body>
 <div id="first" class="wp-block-gallery">${figure('A','/large-a.svg')}${figure('B','/large-b.svg')}${figure('Broken','/missing.jpg')}</div>
 <div id="race" class="wp-block-gallery">${figure('Slow','/slow.svg')}${figure('Fast','/large-fast.svg')}</div>
+<div id="artwork" data-gallery-lightbox data-gallery-lightbox-title="Artwork title" data-gallery-lightbox-description="Dimensions and a short &lt;em&gt;plain-text&lt;/em&gt; description.">${figure('Artwork main','/large-a.svg')}${figure('Artwork detail','/large-b.svg')}</div>
 <div id="single">${figure('Single','/large-single.svg')}</div>
 <figure class="wp-block-image no-lightbox" id="optout"><img src="/thumb.svg" alt="Excluded"></figure>
 <figure class="wp-block-image" id="custom"><a href="/contact"><img src="/thumb.svg" alt="Custom link"></a></figure>
@@ -100,6 +101,11 @@ try {
 	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__counter").textContent'), '1 of 3');
 	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__image").naturalWidth'), 1600);
 	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__caption").textContent'), 'A caption');
+	assert.equal(await evaluate('document.querySelectorAll(".wp-gallery-lightbox__thumbnail").length'), 3, 'Include the main image and all details');
+	await click('.wp-gallery-lightbox__thumbnail:nth-child(2)'); await loaded();
+	assert.ok(await evaluate('document.querySelector(".wp-gallery-lightbox__image").src.endsWith("/large-b.svg")'));
+	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__thumbnail[aria-current]") === document.querySelector(".wp-gallery-lightbox__thumbnail:nth-child(2)")'), true);
+	await key('Home'); await loaded();
 	assert.equal(await evaluate('getComputedStyle(document.querySelector("dialog")).backgroundColor'), 'rgb(255, 239, 213)', 'Theme CSS tokens must control the dialog');
 	await key('ArrowRight'); await loaded();
 	assert.ok(await evaluate('document.querySelector(".wp-gallery-lightbox__image").src.endsWith("/large-b.svg")'));
@@ -150,6 +156,18 @@ try {
 		const fits = await evaluate('(() => { const d=document.querySelector("dialog"), i=d.querySelector("img"), s=d.querySelector(".wp-gallery-lightbox__stage"), r=i.getBoundingClientRect(), b=s.getBoundingClientRect(); return d.scrollWidth<=d.clientWidth && d.scrollHeight<=d.clientHeight+1 && r.width<=i.naturalWidth && r.height<=i.naturalHeight && r.width<=b.width+1 && r.height<=b.height+1; })()');
 		assert.equal(fits, true, `Image must fit without cropping or upscaling at ${width}x${height}`);
 	}
+	await key('Escape');
+	await call('Emulation.setDeviceMetricsOverride', {width:1440,height:900,deviceScaleFactor:1,mobile:false});
+	await click('#artwork button'); await loaded();
+	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__title").textContent'), 'Artwork title');
+	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__description").textContent'), 'Dimensions and a short <em>plain-text</em> description.');
+	assert.equal(await evaluate('!!document.querySelector(".wp-gallery-lightbox__description em")'), false, 'Descriptions must remain plain text');
+	assert.equal(await evaluate('(() => {const title=document.querySelector(".wp-gallery-lightbox__title").getBoundingClientRect(), image=document.querySelector(".wp-gallery-lightbox__stage").getBoundingClientRect(), thumbs=document.querySelector(".wp-gallery-lightbox__thumbnails").getBoundingClientRect();return title.right<=image.left && image.right<=thumbs.left;})()'), true, 'Desktop information, image and thumbnails must form three columns');
+	await call('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:false});
+	await evaluate('new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)))');
+	assert.equal(await evaluate('(() => {const rect=c=>document.querySelector(".wp-gallery-lightbox__"+c).getBoundingClientRect(), title=rect("title"), image=rect("stage"), thumbs=rect("thumbnails"), desc=rect("description");return title.bottom<=image.top && image.bottom<=thumbs.top && thumbs.bottom<=desc.top;})()'), true, 'Mobile order must be title, image, thumbnails, description');
+	await click('.wp-gallery-lightbox__thumbnail:nth-child(2)'); await loaded();
+	assert.equal(await evaluate('document.querySelector(".wp-gallery-lightbox__title").textContent'), 'Artwork title', 'Artwork information must stay stable when changing details');
 	await key('Escape');
 	console.log('PASS: full-size lazy loading, isolated groups, singles, keyboard/Escape/focus, touch, errors, request races, dynamic content, link exclusions and responsive image bounds.');
 } finally {

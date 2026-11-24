@@ -127,6 +127,7 @@ try {
 	$preview_html           = '<figure><a href="' . esc_url( get_permalink( $fixture_ids['es'] ) ) . '"><img alt=""></a></figure>';
 	$artwork_preview_result = \Bonniestar_Art_Plugin\artwork_preview_lightbox( $preview_html, $preview_attrs, $preview_block );
 	$assert( str_contains( $artwork_preview_result, 'data-gallery-lightbox' ) && str_contains( $artwork_preview_result, '80 × 60 cm' ), 'Artwork previews must expose a lightbox group and factual caption.' );
+	$assert( str_contains( $artwork_preview_result, 'data-gallery-lightbox-title=' ) && str_contains( $artwork_preview_result, 'data-gallery-lightbox-description=' ) && str_contains( $artwork_preview_result, 'Body es' ), 'The viewer must receive artwork title, facts and a summary of its content.' );
 	$assert( 1 === substr_count( $artwork_preview_result, '<img' ), 'The main image must not be duplicated when selected in the detail gallery.' );
 	$assert( str_contains( $artwork_preview_result, 'href="' . esc_url( home_url( '/temporary-artwork-test.jpg' ) ) . '"' ), 'The preview must link to the full image instead of the single page.' );
 	$assert( \Bonniestar_Art_Plugin\artwork_preview_lightbox( $preview_html, array(), $preview_block ) === $preview_html, 'Featured images must opt in before their links change.' );

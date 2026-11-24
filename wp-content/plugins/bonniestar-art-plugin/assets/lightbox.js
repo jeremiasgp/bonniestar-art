@@ -7,7 +7,8 @@
 	const imageSelector = '.wp-block-image img, .gallery img, [data-gallery-lightbox] img';
 	const groupSelector = '.wp-block-gallery, .gallery, [data-gallery-lightbox]';
 	const records = new WeakMap();
-	let dialog, stage, picture, caption, status, counter, previous, next, close, original;
+	let dialog, stage, picture, caption, status, counter, previous, next, close, original, heading, thumbnails, footer;
+	let galleryTitle = '', galleryDescription = '';
 	let items = [], index = 0, opener, request = 0, touch = null;
 	let oldOverflow = '';
 	let sessionActive = false;
@@ -66,6 +67,9 @@
 					.map(candidate => records.get(candidate)).filter(Boolean) : [item];
 				opener = trigger;
 				buildDialog();
+				galleryTitle = group?.dataset.galleryLightboxTitle || '';
+				galleryDescription = group?.dataset.galleryLightboxDescription || '';
+				buildThumbnails();
 				oldOverflow = document.documentElement.style.overflow;
 				sessionActive = true;
 				document.documentElement.style.overflow = 'hidden';
@@ -97,6 +101,7 @@
 		if (dialog) return;
 		dialog = element('dialog', 'wp-gallery-lightbox');
 		dialog.setAttribute('aria-label', labels.title);
+		dialog.setAttribute('aria-labelledby', 'wp-gallery-lightbox-title');
 		const toolbar = element('div', 'wp-gallery-lightbox__toolbar');
 		counter = element('span', 'wp-gallery-lightbox__counter');
 		const controls = element('div', 'wp-gallery-lightbox__controls');
@@ -105,6 +110,10 @@
 		close = control(labels.close, '×');
 		controls.append(previous, next, close);
 		toolbar.append(counter, controls);
+		const body = element('div', 'wp-gallery-lightbox__body');
+		heading = element('h2', 'wp-gallery-lightbox__title');
+		heading.id = 'wp-gallery-lightbox-title';
+		caption = element('p', 'wp-gallery-lightbox__description wp-gallery-lightbox__caption');
 		stage = element('div', 'wp-gallery-lightbox__stage');
 		picture = element('img', 'wp-gallery-lightbox__image');
 		picture.alt = '';
@@ -114,11 +123,14 @@
 		status.setAttribute('role', 'status');
 		status.setAttribute('aria-live', 'polite');
 		stage.append(picture, status);
-		const footer = element('div', 'wp-gallery-lightbox__footer');
-		caption = element('p', 'wp-gallery-lightbox__caption');
+		thumbnails = element('div', 'wp-gallery-lightbox__thumbnails');
+		thumbnails.setAttribute('role', 'group');
+		thumbnails.setAttribute('aria-label', labels.thumbnails || labels.title);
+		body.append(heading, stage, thumbnails, caption);
+		footer = element('div', 'wp-gallery-lightbox__footer');
 		original = element('a', 'wp-gallery-lightbox__original', labels.original);
-		footer.append(caption, original);
-		dialog.append(toolbar, stage, footer);
+		footer.append(original);
+		dialog.append(toolbar, body, footer);
 		document.body.append(dialog);
 		previous.addEventListener('click', () => show(index - 1));
 		next.addEventListener('click', () => show(index + 1));
@@ -153,6 +165,23 @@
 		});
 	}
 
+	function buildThumbnails() {
+		thumbnails.replaceChildren();
+		for (const [position, item] of items.entries()) {
+			const button = element('button', 'wp-gallery-lightbox__thumbnail');
+			button.type = 'button';
+			const count = labels.position.replace('%1$s', String(position + 1)).replace('%2$s', String(items.length));
+			button.setAttribute('aria-label', `${item.image.alt || labels.open} (${count})`);
+			const thumbnail = document.createElement('img');
+			thumbnail.alt = '';
+			thumbnail.decoding = 'async';
+			thumbnail.src = safeURL(item.image.dataset.galleryLightboxThumbnail) || safeURL(item.image.currentSrc || item.image.getAttribute('src')) || item.src;
+			button.append(thumbnail);
+			button.addEventListener('click', () => { if (position !== index) show(position); });
+			thumbnails.append(button);
+		}
+	}
+
 	function finishClose() {
 		// A queued native close event may arrive after a new image has been opened.
 		if (dialog.open || !sessionActive) return;
@@ -161,6 +190,7 @@
 		touch = null;
 		picture.removeAttribute('src');
 		picture.hidden = true;
+		thumbnails.replaceChildren();
 		document.documentElement.style.overflow = oldOverflow;
 		if (opener?.isConnected) opener.focus({preventScroll: true});
 	}
@@ -176,10 +206,17 @@
 		const count = labels.position.replace('%1$s', String(index + 1)).replace('%2$s', String(items.length));
 		counter.textContent = count;
 		previous.hidden = next.hidden = items.length < 2;
-		caption.textContent = item.image.closest('figure')?.querySelector('figcaption')?.textContent.trim() || '';
+		heading.textContent = galleryTitle || item.image.alt || labels.title;
+		caption.textContent = galleryDescription || item.image.closest('figure')?.querySelector('figcaption')?.textContent.trim() || '';
 		caption.hidden = !caption.textContent;
+		for (const [position, button] of [...thumbnails.children].entries()) {
+			if (position === index) button.setAttribute('aria-current', 'true');
+			else button.removeAttribute('aria-current');
+		}
+		thumbnails.children[index]?.scrollIntoView({block: 'nearest', inline: 'nearest'});
 		original.href = item.src;
 		original.hidden = true;
+		footer.hidden = true;
 		picture.hidden = true;
 		picture.removeAttribute('src');
 		picture.alt = item.image.alt;
@@ -199,6 +236,7 @@
 			if (token !== request || !dialog.open) return;
 			status.textContent = labels.error;
 			original.hidden = false;
+			footer.hidden = false;
 		} finally {
 			if (token === request) stage.setAttribute('aria-busy', 'false');
 		}

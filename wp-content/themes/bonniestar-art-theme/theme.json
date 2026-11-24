@@ -7,6 +7,7 @@
     "custom": {
       "layout": { "gutter": "clamp(1rem, 4vw, 3rem)" },
       "header": { "anchorOffset": "9rem" },
+      "brand": { "fontSize": "26px", "mobileFontSize": "22px", "letterSpacing": "0.30em", "wordSpacing": "0.15em", "lineHeight": "1.1" },
       "portfolio": { "gap": "clamp(1.5rem, 3vw, 2.5rem)" }
     },
     "blocks": {
@@ -37,6 +38,14 @@
       "fluid": true,
       "defaultFontSizes": false,
       "fontFamilies": [
+        {
+          "slug": "glacial-indifference",
+          "name": "Glacial Indifference",
+          "fontFamily": "'Glacial Indifference', sans-serif",
+          "fontFace": [
+            { "fontFamily": "Glacial Indifference", "fontStyle": "normal", "fontWeight": "400", "fontDisplay": "swap", "src": ["file:./assets/fonts/glacial-indifference/glacial-indifference-regular.woff2"] }
+          ]
+        },
         {
           "slug": "hyperlegible",
           "name": "Atkinson Hyperlegible",
