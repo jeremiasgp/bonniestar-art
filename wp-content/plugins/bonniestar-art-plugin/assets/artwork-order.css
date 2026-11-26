@@ -1,0 +1,34 @@
+.artwork-order { max-inline-size: 60rem; }
+.artwork-order-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	position: sticky;
+	inset-block-start: 32px;
+	z-index: 2;
+	padding-block: 1rem;
+	background: #f0f0f1;
+}
+.artwork-order-status { margin: 0; }
+.artwork-order-list { margin: 0; padding: 0; list-style: none; }
+.artwork-order-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-block-end: 0.5rem;
+	padding: 0.75rem;
+	border: 1px solid #c3c4c7;
+	background: #fff;
+}
+.artwork-order-item img { inline-size: 4rem; block-size: 4rem; object-fit: contain; }
+.artwork-order-title { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; font-weight: 600; }
+.artwork-order-item .button { min-inline-size: 44px; min-block-size: 44px; padding: 0.25rem; }
+.artwork-order-handle { touch-action: none; cursor: grab; }
+.artwork-order-list.is-dragging { user-select: none; }
+.artwork-order-item.is-dragging { opacity: 0.6; outline: 2px solid #2271b1; }
+.artwork-order-handle:active { cursor: grabbing; }
+@media (max-width: 782px) {
+	.artwork-order-toolbar { inset-block-start: 46px; }
+	.artwork-order-item { flex-wrap: wrap; gap: 0.5rem; }
+	.artwork-order-item img { inline-size: 3rem; block-size: 3rem; }
+}

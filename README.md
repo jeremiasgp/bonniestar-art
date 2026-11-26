@@ -1,5 +1,9 @@
 # Generador de proyectos WordPress
 
+Preparación y publicación de Bonnie Star en Hostinger:
+[docs/PUBLICACION.md](docs/PUBLICACION.md). Los paquetes y respaldos se generan
+en `.cache/releases/`, fuera del código versionado.
+
 Este repositorio genera el punto de partida de proyectos WordPress independientes
 en otros directorios. Incluye Docker, un tema de bloques, un plugin mínimo,
 comandos Node.js sin dependencias npm e instrucciones para trabajar con IA.

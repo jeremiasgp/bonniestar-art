@@ -62,6 +62,32 @@ disponible por URL; la portada abre el visor. Sin JavaScript, el enlace abre la
 imagen principal. El filtro de desactivación del lightbox también desactiva esta
 integración, conservando entonces el enlace original de la plantilla.
 
+### Ordenar obras
+
+En **Obras → Ordenar obras**, arrastrar las obras publicadas y pulsar **Guardar
+orden**. También admite controles Subir/Bajar y flechas del teclado sobre el
+control de arrastre. La lista reúne el catálogo completo, sin paginación ni
+duplicados por idioma. Usa `menu_order` nativo, sin dependencias adicionales.
+
+El orden se comparte con las traducciones, incluidos los borradores, sin cambiar
+su estado de publicación. Las nuevas obras se agregan al final; las traducciones
+heredan la posición de su original publicado. La portada consulta ese orden con
+desempate por título e ID. En masonry se lee de arriba abajo por columna.
+
+Requiere permiso para editar obras ajenas y cada registro afectado. El guardado
+verifica nonce, lista completa y estado previo; rechaza listas desactualizadas.
+Los cambios permanecen pendientes si falla la petición y se avisa antes de salir
+sin guardar. Los assets se cargan únicamente en esta pantalla del administrador.
+
+La prueba local usa registros temporales y los elimina al terminar:
+
+```text
+npm run wp -- eval-file /var/www/html/wp-content/plugins/bonniestar-art-plugin/tests/order.php
+```
+
+Verifica persistencia, render de la portada, traducciones, permisos y solicitudes
+inválidas o desactualizadas. Requiere Polylang con es/en/fr y un administrador.
+
 ### Importación explícita del catálogo local
 
 `tools/import-catalog.php` es una herramienta para WP-CLI, nunca cargada por el
@@ -86,7 +112,28 @@ Conserva títulos, contenido, medidas e imágenes destacadas ya editados y combi
 los detalles sin duplicados. Detiene la ejecución si un slug existente pertenece
 a otra obra. No elimina registros ni archivos y no se ejecuta durante setup.
 
-### REST
+### Preparación de medios y publicación
+
+`tools/optimize-images.php` se ejecuta explícitamente mediante
+`npm run media:optimize`, que primero exporta la base y uploads. Conserva los
+originales y el snapshot de metadatos en `_bonniestar_art_webp_original`; mantiene
+IDs, dimensiones y galerías. Genera WebP 85 para full y 80 para tamaños menores,
+y solo cambia cada archivo servido cuando el nuevo pesa menos. Los adjuntos
+procesados se omiten en ejecuciones posteriores. No se carga en el frontend.
+
+`tools/release-inventory.php` informa versiones y conteos sin credenciales.
+`npm run release:prepare -- --url https://bonniestar.art` exporta paquetes privados
+y SQL con URLs adaptadas sin modificar la base local. Ver `docs/PUBLICACION.md`.
+
+Comprobación de medios de solo lectura:
+
+```text
+npm run wp -- eval-file /var/www/html/wp-content/plugins/bonniestar-art-plugin/tests/media.php
+```
+
+Comprueba archivos, MIME, dimensiones completas/responsive y originales.
+
+### REST y autenticación
 
 La API requiere autenticación para todas sus rutas. El editor nativo mantiene
 REST habilitada para usuarios autenticados; los permisos y nonces de WordPress

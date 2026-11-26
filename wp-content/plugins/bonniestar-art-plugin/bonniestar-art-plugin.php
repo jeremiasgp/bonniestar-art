@@ -24,4 +24,5 @@ require_once __DIR__ . '/includes/lightbox.php';
 require_once __DIR__ . '/includes/artworks.php';
 require_once __DIR__ . '/includes/artwork-editor.php';
 require_once __DIR__ . '/includes/artwork-languages.php';
+require_once __DIR__ . '/includes/artwork-order.php';
 require_once __DIR__ . '/includes/rest-access.php';

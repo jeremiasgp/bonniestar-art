@@ -137,8 +137,10 @@ Tags: full-site-editing
 
 .bonniestar-art-header .bonniestar-art-header-actions {
 	flex-shrink: 0;
-	gap: var(--wp--preset--spacing--20);
+	gap: var(--wp--custom--header--group-gap);
 }
+
+.bonniestar-art-header-actions .bonniestar-art-header-contact { gap: 0; }
 
 .bonniestar-art-header-actions .bonniestar-art-language-switcher {
 	flex: 0 0 auto;
@@ -152,7 +154,7 @@ Tags: full-site-editing
 }
 
 .bonniestar-art-language-switcher a {
-	inline-size: 2.75rem;
+	inline-size: var(--wp--custom--header--control-inline-size);
 	min-block-size: 2.75rem;
 	justify-content: center;
 	padding: 0;
@@ -207,9 +209,67 @@ Tags: full-site-editing
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-inline-size: 2.75rem;
+	min-inline-size: var(--wp--custom--header--control-inline-size);
 	min-block-size: 2.75rem;
 }
+
+.bonniestar-art-email { display: flex; align-items: center; }
+.bonniestar-art-icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	inline-size: 2.75rem;
+	block-size: 2.75rem;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--accent);
+	cursor: pointer;
+}
+.bonniestar-art-icon-button[hidden] { display: none; }
+.bonniestar-art-icon-button:hover { color: var(--wp--preset--color--accent-strong); }
+.bonniestar-art-email-trigger { inline-size: var(--wp--custom--header--control-inline-size); }
+.bonniestar-art-email-copy { transition: background-color 420ms ease-out; }
+.bonniestar-art-email-copy.is-copied {
+	background-color: color-mix(in srgb, var(--wp--preset--color--accent) 16%, var(--wp--preset--color--surface));
+	transition-duration: 100ms;
+}
+.bonniestar-art-email-popover {
+	position: fixed;
+	inset: 6rem 1rem auto auto;
+	margin: 0;
+	max-inline-size: calc(100vw - 1rem);
+	padding: var(--wp--preset--spacing--20);
+	border: 1px solid var(--wp--preset--color--muted);
+	background: var(--wp--preset--color--surface);
+	color: var(--wp--preset--color--ink);
+	font-size: var(--wp--preset--font-size--small);
+	overflow: visible;
+	box-shadow: var(--wp--custom--header--popover-shadow);
+}
+.bonniestar-art-email-popover::before {
+	content: "";
+	position: absolute;
+	inline-size: 0.75rem;
+	block-size: 0.75rem;
+	inset-block-start: -0.4375rem;
+	left: calc(var(--email-arrow-left, 85%) - 0.375rem);
+	transform: rotate(45deg);
+	background: var(--wp--preset--color--surface);
+	border-block-start: 1px solid var(--wp--preset--color--muted);
+	border-inline-start: 1px solid var(--wp--preset--color--muted);
+}
+.bonniestar-art-email-popover:popover-open {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: var(--wp--preset--spacing--20);
+}
+.bonniestar-art-email-address { color: inherit; }
+.bonniestar-art-email-status { grid-column: 1 / -1; max-inline-size: 18rem; }
+.bonniestar-art-email-status:not(:empty) { padding: var(--wp--preset--spacing--20); }
 
 .bonniestar-art-home {
 	margin-block-start: 0;
@@ -307,6 +367,9 @@ Tags: full-site-editing
 	padding-block: var(--wp--preset--spacing--40);
 }
 
+.bonniestar-art-footer-contact { margin: 0; }
+.bonniestar-art-footer-contact a { color: inherit; }
+
 /* 25rem (400px): two useful image widths after gutters and the column gap. */
 @media (min-width: 25rem) {
 	.bonniestar-art-portfolio-query .bonniestar-art-masonry {
@@ -324,10 +387,6 @@ Tags: full-site-editing
 		gap: var(--wp--preset--spacing--20);
 	}
 
-	.bonniestar-art-header .bonniestar-art-header-actions {
-		gap: 0;
-	}
-
 	.bonniestar-art-header-actions .bonniestar-art-language-switcher-desktop {
 		display: none;
 	}
@@ -340,6 +399,17 @@ Tags: full-site-editing
 		display: flex;
 	}
 
+	.bonniestar-art-header .bonniestar-art-navigation .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-content > .wp-block-navigation__container {
+		flex-direction: row;
+		gap: 0;
+	}
+
+	.bonniestar-art-header .bonniestar-art-navigation .is-menu-open .bonniestar-art-language-switcher-mobile a {
+		inline-size: var(--wp--custom--header--control-inline-size);
+		min-block-size: 2.75rem;
+		justify-content: center;
+	}
+
 	.bonniestar-art-navigation .wp-block-navigation__responsive-container-open {
 		display: inline-flex;
 	}
@@ -349,7 +419,18 @@ Tags: full-site-editing
 	}
 }
 
-/* Preserve the 22px spaced logo and two 44px controls at 320px. */
+/* Compact tracking makes room for three 44px controls on small phones. */
+@media (max-width: 24.999rem) {
+	.bonniestar-art-wordmark .brand-logo {
+		letter-spacing: var(--wp--custom--brand--compact-letter-spacing);
+	}
+	.wp-site-blocks > header.wp-block-template-part {
+		padding-inline: var(--wp--preset--spacing--20);
+	}
+	.wp-block-group.bonniestar-art-header { gap: 0; }
+}
+
+/* Preserve the 22px logo and accessible controls at 320px. */
 @media (max-width: 22rem) {
 	.wp-site-blocks > header.wp-block-template-part {
 		padding-inline: var(--wp--preset--spacing--20);
@@ -362,6 +443,8 @@ Tags: full-site-editing
 
 /* Desktop: full navigation and three masonry columns. */
 @media (min-width: 60rem) {
+	.bonniestar-art-header .bonniestar-art-navigation { display: none; }
+
 	.bonniestar-art-portfolio-query .bonniestar-art-masonry {
 		column-count: 3;
 	}
@@ -375,6 +458,8 @@ Tags: full-site-editing
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.bonniestar-art-email-copy { transition: none; }
+
 	.bonniestar-art-card .wp-block-post-featured-image img,
 	.bonniestar-art-social .wp-social-link,
 	.wp-lightbox-overlay,

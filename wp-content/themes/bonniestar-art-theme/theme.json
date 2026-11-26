@@ -6,8 +6,8 @@
     "layout": { "contentSize": "42rem", "wideSize": "76rem" },
     "custom": {
       "layout": { "gutter": "clamp(1rem, 4vw, 3rem)" },
-      "header": { "anchorOffset": "9rem" },
-      "brand": { "fontSize": "26px", "mobileFontSize": "22px", "letterSpacing": "0.30em", "wordSpacing": "0.15em", "lineHeight": "1.1" },
+      "header": { "anchorOffset": "9rem", "controlInlineSize": "2.25rem", "groupGap": "1rem", "popoverShadow": "0 4px 16px color-mix(in srgb, var(--wp--preset--color--ink) 12%, transparent)" },
+      "brand": { "fontSize": "26px", "mobileFontSize": "22px", "letterSpacing": "0.30em", "compactLetterSpacing": "0.12em", "wordSpacing": "0.15em", "lineHeight": "1.1" },
       "portfolio": { "gap": "clamp(1.5rem, 3vw, 2.5rem)" }
     },
     "blocks": {

@@ -20,7 +20,11 @@
     "verify:static": "node scripts/dev.mjs verify-static",
     "wp": "node scripts/dev.mjs wp",
     "quality:install": "node scripts/dev.mjs quality-install",
-    "test": "node --test scripts/workflow.test.mjs scripts/create.test.mjs"
+    "test": "node --test scripts/workflow.test.mjs scripts/create.test.mjs",
+    "media:audit": "node scripts/release.mjs audit",
+    "media:optimize": "node scripts/release.mjs optimize",
+    "release:prepare": "node scripts/release.mjs prepare",
+    "release:code": "node scripts/release.mjs code"
   },
   "starterIdentity": {
     "brand": "bonniestar-art"
